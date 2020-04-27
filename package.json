@@ -1,7 +1,7 @@
 {
-  "name": "vuenode-fullstack",
-  "description": "Vue Node Fullstack",
-  "author": "asadazmat@gmail.com",
+  "name": "BloodDoctor",
+  "description": "An app to help doctors request tests on blood samples",
+  "author": "blood.doctor.app@gmail.com",
   "private": true,
   "scripts": {
     "start": "cross-env NODE_ENV=production node server",

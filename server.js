@@ -170,6 +170,11 @@ const prettyHost = customHost || "localhost";
 
 // Start your app.
 server.listen(port, host, err => {
+  
+  console.log('Server started - hopefully!')
+  console.log('host:' + prettyHost)
+  console.log('port:' + port)
+
   if (err) {
     return logger.error(err.message);
   }
