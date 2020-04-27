@@ -1,6 +1,6 @@
 {
   "name": "BloodDoctor",
-  "description": "An app to help doctors request tests on blood samples",
+  "description": "An App to help doctors request tests on blood samples",
   "author": "blood.doctor.app@gmail.com",
   "private": true,
   "scripts": {
@@ -31,7 +31,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run eslint-check && npm run lint"
+        "__comment" : "pre-commit : npm run eslint-check && npm run lint"
     }
   },
   "jest": {
