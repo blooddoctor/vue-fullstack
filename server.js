@@ -94,7 +94,7 @@ app.use("/public", serve("./public", true));
 app.use("/manifest.json", serve("./manifest.json", true));
 app.use("/service-worker.js", serve("./dist/service-worker.js"));
 app.disable("x-powered-by");
-app.use(morgan("dev"));
+app.use(morgan("combined"));
 // since this app has no user-specific content, every page is micro-cacheable.
 // if your app involves user-specific content, you need to implement custom
 // logic to determine whether a request is cacheable based on its url and

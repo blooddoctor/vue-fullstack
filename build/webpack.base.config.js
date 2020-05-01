@@ -30,6 +30,10 @@ module.exports = {
         options: vueConfig
       },
       {
+        test: /\.pug$/,
+        loader: 'pug-plain-loader'
+      },
+      {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/
