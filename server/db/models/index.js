@@ -28,8 +28,15 @@ const modules = [
 // these are the new models
 // import v2 from 'v2' // not allowed outside module
 const v2 = require('./v2')
-
-console.log('v2 models', v2)
+// console.log('v2 models', v2)
+// need to create sequelize models
+Object.keys(v2).forEach( (name,table) => {
+  const cfg = {timestamps: false, indexes: [ {unique: true, fields: ['id']}]}
+  const model = sequelize.define(name, table.fields, cfg)
+  console.log('model:', name)
+  model.sync()
+  models[name] = model
+})
 
 // Initialize models
 modules.forEach(module => {
@@ -38,13 +45,13 @@ modules.forEach(module => {
 });
 
 // Apply associations - make each Model and property on the object??
-// invoke the assovate method if defined on the Model
+// invoke the associate method if defined on the Model
 Object.keys(models).forEach(key => {
   if ('associate' in models[key]) {
     models[key].associate(models);
   }
 });
-
+console.log('models' , models)
 models.sequelize = sequelize;
 models.Sequelize = Sequelize;
 // console.log('Finished models/index')

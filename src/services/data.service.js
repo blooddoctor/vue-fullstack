@@ -4,6 +4,7 @@ import { ACCESS_TOKEN } from '../constants';
 
 // https://github.com/axios/axios
 
+
 const instance = axios.create({});
 
 axios.interceptors.request.use(config => {
@@ -29,4 +30,8 @@ const dataService = {
   delete: del
 };
 
-export { dataService };
+const test = '123'
+
+console.log('dataService', dataService)
+
+export { dataService, test };

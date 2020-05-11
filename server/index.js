@@ -16,6 +16,9 @@ function apiRoutes(app) {
   // ========= Public routes
   // App public routes
   require('./features/app/app.routes')(app);
+
+  // Db api  routes
+  require('./features/db/routes')(app);
   // Content public routes
   require('./features/content/content-public.routes')(app);
   // ========= Secure routes

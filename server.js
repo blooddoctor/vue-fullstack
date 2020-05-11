@@ -148,7 +148,7 @@ async function render(req, res) {
     );
     res.send(html);
     if (!isProd) {
-      console.log(`whole request: ${Date.now() - s}ms`);
+      // console.log(`whole request: ${Date.now() - s}ms`);
     }
   });
 }
@@ -172,7 +172,7 @@ const prettyHost = customHost || "localhost";
 server.listen(port, host, err => {
   
   console.log('Server started - hopefully!')
-  console.log('host:' + prettyHost)
+  // console.log('host:' + prettyHost)
   console.log('port:' + port)
 
   if (err) {

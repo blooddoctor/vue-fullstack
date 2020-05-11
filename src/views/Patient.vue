@@ -1,16 +1,8 @@
 <template lang="pug">
 .row
   .column
-    h1 {{ appData.content.app_title }}
-    |       {{ appData.content.app_description }}
-    br
-      
-    .button(v-on:click='this.getUsers') Get Users
+    h1 Patient Details
 
-    router-link(to='/api/db/Users/get/1') Get Users
-
-    div
-      router-link.button.button-outline.float-right(to='about') More info
 
 
 </template>
@@ -21,10 +13,22 @@ console.log('before')
 import {dataService} from '../services/data.service'
 console.log('after' , dataService)
 
+class Patient {
+
+}
+const curr = new Patient({
+      name: 'Eamonn Coghlan',
+      address: 'Here, there and everywhere',
+      phone: '02142168',
+      email: 'eamole@hotmail.com'
+
+    })
+
+
 export default {
   data () {
     return {
-      data:dataService
+      curr: curr
     }
   },
   methods: {
