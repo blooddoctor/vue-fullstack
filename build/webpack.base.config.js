@@ -51,7 +51,14 @@ module.exports = {
         use: [
           isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',
           'css-loader',
-          'sass-loader'
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: require('sass'),
+              fiber: require('fibers'),
+              // indentedSyntax: true // optional
+            }
+          }
         ]
       }
     ]

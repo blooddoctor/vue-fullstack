@@ -9,6 +9,8 @@ import { ACCESS_TOKEN } from './constants';
 import titleMixin from './util/title';
 import * as filters from './util/filters';
 
+// import vuetify from './plugins/vuetify'
+
 // mixin for handling title
 Vue.mixin(titleMixin);
 // plugins
@@ -32,6 +34,7 @@ export function createApp() {
   const app = new Vue({
     router,
     store,
+    // vuetify,  // add in vuetify
     render: h => h(App)
   });
 
