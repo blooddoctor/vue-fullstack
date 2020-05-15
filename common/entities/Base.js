@@ -1,5 +1,9 @@
 export default class Base {
-  constructor(cfg) {
+  db = null
+  name = ''
+  constructor(db, name, cfg) {
+    this.db = db
+    this.name = name
     // this = {...cfg} // spread - can't assign to this
     Object.assign(this, cfg)
   }
@@ -11,14 +15,19 @@ export default class Base {
     neeed to be async
   */
   getOne (id) {
-    return this.db.get(id)
+    console.log('Base:getOne')
+    return this.db.get( {model:this.name , id} )
+  }
+
+  static getFirst () {
+
   }
 
   // this connects to either the client side or server db conection
-  client (db) {
+  static client (db) {
     this.db = db
   }
-  server (db) {
+  static server (db) {
     this.db = db
   }
 }

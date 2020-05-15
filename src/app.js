@@ -9,6 +9,9 @@ import { ACCESS_TOKEN } from './constants';
 import titleMixin from './util/title';
 import * as filters from './util/filters';
 
+import Db from './services/db'
+
+global.db = new Db();
 // import vuetify from './plugins/vuetify'
 
 // mixin for handling title
@@ -20,6 +23,8 @@ createValidation();
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key]);
 });
+
+
 
 // Expose a factory function that creates a fresh set of store, router,
 // app instances on each call (which is called for each SSR request)

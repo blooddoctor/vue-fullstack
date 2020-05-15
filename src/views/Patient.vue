@@ -46,25 +46,31 @@
         label(for='email') Email
           input#email(v-model="curr.email" type="email" placeholder='Patient email')
 
-
+    .button(@click='getOne')
 
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-console.log('before')
-import {dataService} from '../services/data.service'
-console.log('after' , dataService)
+// console.log('before')
+// import {dataService} from '../services/data.service'
+// console.log('after' , dataService)
 // i need to go out of the project - perhaps an internal entity folder linking out?
-import Patient from './../../common/entities/Patient'
+// import Patient from './../../common/entities/Patient'
 
-const curr = Patient.dummy()
+// Patient.client(dataService)
 
+// const curr = Patient.dummy()
+// const curr = db.model('Patients').getOne(1)
+// it looks like I might have to do this INSIDE vue, to give me access
+// .then(
+//   console.log('curr', curr)
+// )
 
 export default {
   data () {
     return {
-      curr: curr
+      curr: {}
     }
   },
   methods: {
@@ -72,7 +78,18 @@ export default {
     getUsers () {
       console.log('this', this.data.get('/api/db'))
 
+    },
+    getOne () {
+
     }
+
+  },
+  created () {
+    db.model('Patients').getOne(1)
+    .then( res => {
+      console.log('*** data ***', res.data)
+      this.curr = res.data
+    })
   },
   computed: {
     ...mapGetters(['appData'])
