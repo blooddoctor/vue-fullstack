@@ -44,7 +44,10 @@ module.exports = {
       phone: T.phone(),
       email: T.email(),
       address: T.address()
-    }
+    },
+    seed: [
+      {name: 'Eamonn Coghlan', doctorId: 1, dob: '1965-09-18', weight:200, height:1000,phone:'02142168',email:'eamole@hotmail.com',address:'Here, there'}
+    ]
   },
   Colours: {
     fields: {
