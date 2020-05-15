@@ -7,18 +7,18 @@ import { ACCESS_TOKEN } from '../constants';
 
 const instance = axios.create({});
 
-axios.interceptors.request.use(config => {
-  if (typeof window === 'undefined') {
-    return config;
-  }
-  const token = sessionService.get(ACCESS_TOKEN);
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// axios.interceptors.request.use(config => {
+//   if (typeof window === 'undefined') {
+//     return config;
+//   }
+//   const token = sessionService.get(ACCESS_TOKEN);
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
 
-const get = url => instance.get(url);
+const get = url => {console.log('axios getting url', url); return instance.get(url);}
 const post = (url, data) => instance.post(url, data);
 const put = (url, data) => instance.put(url, data);
 const del = url => instance.delete(url);
@@ -30,8 +30,4 @@ const dataService = {
   delete: del
 };
 
-const test = '123'
-
-console.log('dataService', dataService)
-
-export { dataService, test };
+export { dataService };

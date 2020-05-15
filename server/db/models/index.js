@@ -30,13 +30,47 @@ const modules = [
 const v2 = require('./v2')
 // console.log('v2 models', v2)
 // need to create sequelize models
-Object.keys(v2).forEach( (name,table) => {
-  const cfg = {timestamps: false, indexes: [ {unique: true, fields: ['id']}]}
-  const model = sequelize.define(name, table.fields, cfg)
+// Object.keys(v2).forEach( (name,table) => {
+
+for( const [name,table] of Object.entries(v2) ) {
   console.log('model:', name)
-  model.sync()
+  console.log('table:', table)
+  // console.log('fields:', table.fields)
+  const cfg = {timestamps: false, indexes: [ {unique: true, fields: ['id']}]}
+  let model
+  try {
+    model = sequelize.define(name, table.fields, cfg)
+
+  } catch(err){
+    console.log('Error', err)
+  }
+  model.afterCreate( x => { // that's the insert not the create table!!
+    console.log('new record event', x.name)
+  })
+  console.log('sync', name)
+  model.sync({force : true})
+  .then( () => {
+
+    // table has been dropped!!
+    if(table.seed) {
+      console.log('seed', name)
+      table.seed.forEach( (rec,i) => {
+        console.log('rec', rec)
+        model.create(rec)
+        .then( o => {
+          // console.log('o', o.toJSON())
+        })
+        .catch(err => { // not always throwing erros
+          console.error('err', err)
+        })
+
+      })
+    }
+
+
+  }) // force modi structure
   models[name] = model
-})
+}
 
 // Initialize models
 modules.forEach(module => {
@@ -51,7 +85,7 @@ Object.keys(models).forEach(key => {
     models[key].associate(models);
   }
 });
-console.log('models' , models)
+// console.log('models' , models)
 models.sequelize = sequelize;
 models.Sequelize = Sequelize;
 // console.log('Finished models/index')

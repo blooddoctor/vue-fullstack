@@ -17,9 +17,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-console.log('before')
 import {dataService} from '../services/data.service'
-console.log('after' , dataService)
 
 export default {
   data () {
@@ -30,7 +28,14 @@ export default {
   methods: {
     // Don't use an arrow function when defining a mothod - no this!! 
     getUsers () {
-      console.log('this', this.data.get('/api/db'))
+      console.log('issuing request')
+      this.data.get('/db/Users/1')  // should be async
+      .then( data => {
+        console.log('response', data)
+      })
+      .catch( err => {
+        console.error('err' , err)
+      })      
 
     }
   },

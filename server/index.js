@@ -7,11 +7,11 @@ module.exports = function apiMiddlewares(app) {
 
 function apiRoutes(app) {
   /* eslint global-require: "off" */
-  globby([`${__dirname}/./features/*/**/*.policy.js`]).then(policies => {
-    policies.forEach(policyPath => {
-      require(path.resolve(policyPath)).invokeRolesPolicies();
-    });
-  });
+  // globby([`${__dirname}/./features/*/**/*.policy.js`]).then(policies => {
+  //   policies.forEach(policyPath => {
+  //     require(path.resolve(policyPath)).invokeRolesPolicies();
+  //   });
+  // });
 
   // ========= Public routes
   // App public routes
