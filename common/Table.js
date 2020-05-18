@@ -1,76 +1,80 @@
-class Table {
+// import * as utils from './util';
+const Base = require('./entities/Base')
+
+function lowerCaseFirstLetter(string) {
+  return string.charAt(0).toLowerCase() + string.slice(1);
+}
+
+module.exports = class Table extends Base{
 
   // need to harmonize the cs and ss 
   db = null // I'll set this for the client model -
   constructor (name,table) {
+    super()
       
-      // Object.assign(this,cfg)
+    // Object.assign(this,cfg)
 
-      this.name = name
+    this.name = name
 
-      // process the pk & fk's
-      this.fields = {} // build the object anew
-      this.indexes = []
-      this.keys = table.keys
+    // process the pk & fk's
+    this.fields = {} // build the object anew
+    this.indexes = []
+    this.keys = table.keys
 
-      // pk
-      if(this.keys && this.keys.pk) {
+    // pk
+    if(this.keys && this.keys.pk) {
+      
+      this.pk = this.keys.pk
+      this.pk.name = 'id'    // use a naming protocol object
+      // this seems to cause a circ ref
+      // pk.this = this  // this pointer
+
+      // fields.unshift(this.keys.pk)
+      
+      // add the field
+      this.fields.id = this.pk
+
+      this.indexes.push( {unique: true, fields: [this.pk.name]} ) 
+    }
+
+
+    // create the foreign keys
+    if(this.keys && this.keys.fks) {
+      this.keys.fks.forEach(fk => {
+        const plural = fk.entityName + 's'  // simplistic
+        const tableName = plural
+        const fkName = lowerCaseFirstLetter(fk.entityName) + 'Id'
         
-        this.pk = this.keys.pk
-        this.pk.name = 'id'    // use a naming protocol object
-        // this seems to cause a circ ref
-        // pk.this = this  // this pointer
+        fk.name = fkName
+        // fk.this = this
 
-        // fields.unshift(this.keys.pk)
-        
-        // add the field
-        this.fields.id = this.pk
+        // this is the remote/foreign this
+        fk.tableName = tableName
 
-        this.indexes.push( {unique: true, fields: [this.pk.name]} ) 
-      }
+        this.fields[fkName] = fk  
+        // prob create an index!!
+        this.indexes.push( {unique: false, fields: [fk.name]} ) 
 
+        // constraints??
+      })
+    }
+    
+    // process the normal fields
+    if(table.fields) {
+      for( const [name,field] of Object.entries(table.fields) ) {
+        field.name = name
 
-      // create the foreign keys
-      if(this.keys && this.keys.fks) {
-        this.keys.fks.forEach(fk => {
-          const plural = fk.entityName + 's'  // simplistic
-          const tableName = plural
-          const fkName = lowerCaseFirstLetter(fk.entityName) + 'Id'
-          
-          fk.name = fkName
-          // fk.this = this
-
-          // this is the remote/foreign this
-          fk.tableName = tableName
-
-          this.fields[fkName] = fk  
-          // prob create an index!!
-          this.indexes.push( {unique: false, fields: [fk.name]} ) 
-
-          // constraints??
-        })
-      }
-      // process the normal fields
-      if(table.fields) {
-        for( const [name,field] of Object.entries(table.fields) ) {
-          field.name = name
-
-          // field.this = this
-          // we prob should do some processing here
-          this.fields[name] = field
-          // index it?
-          // use either unique or isUnique type attr name
-          if(field.indexed || field.isIndexed || field.isUnique || field.unique) {
-            this.indexes.push( {unique: field.isUnique || field.unique, fields: [field.name]} ) 
-          }
+        // field.this = this
+        // we prob should do some processing here
+        this.fields[name] = field
+        // index it?
+        // use either unique or isUnique type attr name
+        if(field.indexed || field.isIndexed || field.isUnique || field.unique) {
+          this.indexes.push( {unique: field.isUnique || field.unique, fields: [field.name]} ) 
         }
-
       }
 
-      // overwrite the original fields 
-      // this.fields = fields
-      // modified this
-      // console.log('** this:', this)
+    }
 
   }
 

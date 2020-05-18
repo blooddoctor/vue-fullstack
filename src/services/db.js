@@ -1,5 +1,5 @@
 import {dataService} from './data.service'
-import Base from '../../common/entities/Base'
+// import Base from '../../common/entities/Base'
 // store on window
 export default class Db {
   models = {}
@@ -8,10 +8,12 @@ export default class Db {
     this.apiPath = apiPath
   }
   // I should make this async on rx the model
+  // no longer really needed
   model (name) {
-    if(!this.models[name]) {
-      this.models[name] = new Base(this, name)
-    }
+    // models autocreated
+    // if(!this.models[name]) {
+    //   this.models[name] = new Base(this, name)
+    // }
     console.log('db.model', this.models[name])
     return this.models[name]
   }

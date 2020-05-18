@@ -28,6 +28,6 @@ const dataService = {
   post,
   put,
   delete: del
-};
+}
 
-export { dataService };
+export default dataService

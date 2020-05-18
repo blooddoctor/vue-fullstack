@@ -1,16 +1,8 @@
 const Sequelize = require('sequelize');
 const env = process.env.NODE_ENV || 'development';
 const config = require('../database.json')[env];
-const models = {};
+
 let sequelize;
-
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-function lowerCaseFirstLetter(string) {
-  return string.charAt(0).toLowerCase() + string.slice(1);
-}
 
 
 if (config.use_env_variable) {
@@ -37,14 +29,18 @@ const modules = [
 // these are the new models
 // import v2 from 'v2' // not allowed outside module
 // server/db/models/index.js
-const v2 = require('../../../common/models')
-const Db = require('../../../common/Table')
+const _tables = require('../../../common/models')
+const Table = require('../../../common/Table')
+
+// import Table from '../../../common/Table'
+
 // console.log('v2 models', v2)
 // need to create sequelize models
 // Object.keys(v2).forEach( (name,table) => {
 const tables = {}
+const models = {};
 
-for( const [name, _table] of Object.entries(models) ) {
+for( const [name, _table] of Object.entries(_tables) ) {
   console.log('server/models/index:model', name)
 
   const table = new Table(name, _table)
@@ -59,6 +55,8 @@ for( const [name, _table] of Object.entries(models) ) {
   } catch(err){
     console.log('Error', err)
   }
+  console.log('*** ADD MODEL ***', model)
+  models[name] = model // this line wan't executing!!
   
   // I think sequelize returns a function!!
   model.table = table // this is the json
@@ -94,8 +92,6 @@ for( const [name, _table] of Object.entries(models) ) {
   }) ); // force modi structure - NEEDS ;
   
 
-  console.log('*** ADD MODEL ***', model)
-  models[name] = model // this line wan't executing!!
 }// end for loop
 
 // Initialize models

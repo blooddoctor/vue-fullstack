@@ -1,26 +1,78 @@
-import Table from './Table'
-import models from './models'
+// import Table from './Table'
+const Table = require('./Table')
+const models = require('./models')
 // hardwired for models
 
-export default new class Db {
-  
-  tables = []
 
-  constructor () {
-
+class Db {  // should extends 
+  models = {}
+  tables = {}
+  apiPath = ''
+  dataService = null  // this is the transport layout - axios
+  /*
+    need to bind in the data service for the tables
+  */  
+  constructor (dataService, apiPath) {
+    this.apiPath = apiPath
+    this.dataService = dataService
+    // Object.assign(this, dataService)
+    console.log('Common/Db:db:', this)
     for( const [name, _table] of Object.entries(models) ) {
       console.log('Common/Db:model:', name)
       
       const table = new Table(name, _table)
+      
+      // Db needs data access methods
       table.db = this
       this.tables[name] = table
 
     }
 
   }
+  // I should make this async on rx the model
+  // no longer really needed
+  model (name) {
+    // models autocreated
+    // if(!this.models[name]) {
+    //   this.models[name] = new Base(this, name)
+    // }
+    console.log('db.model', this.models[name])
+    return this.models[name]
+  }
+  /*
+    this isn't used any more - I think!!
+  */
+  getModel(table) {
+    // else - get the model from the server
+    console.log(`Common/Db:getModel(${table.name})`)
+    // should stop multiple requests for the same model
+    table.modelRequest = dataService.get(`/db/${table.name}/getModel/`)
+    .then( data => {
+      table.isModelLoaded = true
+      console.log(`Common/Db.getModel(${table.name}).then()` , data.data)
+      // populate the Base model
+      Object.assign(table, data.data)
+    })
+    return table.modelRequest  // a promise
+  }
+
+  // these paths need to be defined in common/api/routes - share with server
+  // server defines the end points. These objects offer proxies to those
+  // end points
+  // the Model objects offer the same api proxy methods!!
+  getOne(query) {
+    return this.dataService.get(`/db/${query.model}/getOne/${query.id}`)
+  }
+  getFirst(query) {
+    return this.dataService.get(`/db/${query.model}/getFirst`)
+  }
+  getAll(query) {
+    return this.dataService.get(`/db/${query.model}/getAll`)
+  }
 
 
 }
 
+export default Db
 
 

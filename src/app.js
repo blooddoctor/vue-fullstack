@@ -9,9 +9,13 @@ import { ACCESS_TOKEN } from './constants';
 import titleMixin from './util/title';
 import * as filters from './util/filters';
 
-import Db from './services/db'
+import dataService from './services/data.service'  // comms
+import Db from '../common/Db'   // new ClientSide models
+// merge the comms and models
+global.db = new Db(dataService)
+global.db.models = global.db.tables // harmonize
+console.log('db', db)
 
-global.db = new Db();
 // import vuetify from './plugins/vuetify'
 
 // mixin for handling title

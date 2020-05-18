@@ -12,7 +12,46 @@ class VueSingle {
     curr: {}
   }
 
+
   init(primaryModelName) {
+    console.log('*** DB', db)
+    this.primaryModelName = primaryModelName
+    this.primaryModel = db.model(this.primaryModelName)
+    console.log('VueSingle:getting foreign key data')
+    if(this.primaryModel.keys && this.primaryModel.keys.fks) {
+      this.primaryModel.keys.fks.forEach(fk => {
+
+        // set up the data holder
+        this.data[fk.tableName] = []
+        
+        const fkReq = { 
+          name: fk.tableName,
+          fk: fk,
+          req: db.model(fk.tableName).getAll(),
+          data : []
+        }
+        // store the request by table/model name
+        this.foreignKeyDataRequests[fk.tableName] = fkReq 
+        
+        // this shpuldfire AFTER the model received
+        // this.onModelReceived()
+
+        // wait for the data to arrive
+        fkReq.req.then((data)=> {
+          console.log('FK data received', data, this.primaryModel, fkReq)
+          // will this be bound/closure
+          this.data[fkReq.name] = data.data
+          fkReq.data = data.data // store the data on the model!!
+        })
+
+      })
+    } // if
+  }
+
+  /*
+    refactored to load models from common - not DB request
+  */
+  init_old(primaryModelName) {
 
     this.primaryModelName = primaryModelName
     this.primaryModel = db.model(this.primaryModelName)
