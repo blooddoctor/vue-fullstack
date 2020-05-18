@@ -16,7 +16,8 @@
 
       //- this is a FK lookup
       label(for='doctor') Doctor
-        select#doctor(v-model="curr.doctor" placeholder='Patient doctor')
+        select#doctor(v-model="curr.doctorId" placeholder='Patient doctor')
+          option(v-for='doc in Doctors' :value='doc.id' :key='doc.id') {{doc.name}} 
 
     .column
 
@@ -52,25 +53,37 @@
 
 <script>
 import { mapGetters } from 'vuex';
-// console.log('before')
-// import {dataService} from '../services/data.service'
-// console.log('after' , dataService)
-// i need to go out of the project - perhaps an internal entity folder linking out?
-// import Patient from './../../common/entities/Patient'
 
-// Patient.client(dataService)
+const model = db.model('Patients')
+const req = model.getModel()
 
-// const curr = Patient.dummy()
-// const curr = db.model('Patients').getOne(1)
-// it looks like I might have to do this INSIDE vue, to give me access
-// .then(
-//   console.log('curr', curr)
-// )
+// store the fk requests, and responses here
+const fks = {}
+req.then( () => { // the model has responded
+  // this is lower on the chain - no data!!
+  console.log('Get the FKs')
+  if(model.keys && model.keys.fks) {
+    model.keys.fks.forEach(fk =>{
+      const fkReq = { 
+        req: db.model(fk.tableName).getAll(),
+        data : []
+      }
+      fks[fk.tableName] = fkReq 
+      // wait for the data to arrive
+      fkReq.req.then((data)=> {
+        console.log('** received', data, model, fkReq)
+        // will this be bound/closure
+        fkReq.data = data.data// store the data on the model!!
+      })
+    })
+  }
+})
 
 export default {
   data () {
     return {
-      curr: {}
+      curr: {},
+      Doctors: [] // {id:1,name:'Test',x:'X'} 
     }
   },
   methods: {
@@ -85,10 +98,26 @@ export default {
 
   },
   created () {
-    db.model('Patients').getOne(1)
+    console.log('Created')
+    req.then( data => {
+      console.log('The model has arrived', data)
+      console.log('Vue', this)
+      for(const [name, fkReq] of Object.entries(fks)) {
+        console.log('Vue:Patient:Set receiver for FK ', name)
+        fkReq.req.then( () => {
+          console.log('FK Data Received', name, fkReq, this[name], fks[name].data)
+          this[name] = fkReq.data
+        })
+      }
+    })
+    model.getFirst() // returns an array!
     .then( res => {
-      console.log('*** data ***', res.data)
-      this.curr = res.data
+      console.log('*** data RX ***', res.data)
+      if(res.data[0]) {
+        this.curr = res.data[0]
+      } else {
+        console.log('*** No data ***')
+      }
     })
   },
   computed: {

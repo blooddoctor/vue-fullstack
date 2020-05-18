@@ -4,6 +4,15 @@ const config = require('../database.json')[env];
 const models = {};
 let sequelize;
 
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+function lowerCaseFirstLetter(string) {
+  return string.charAt(0).toLowerCase() + string.slice(1);
+}
+
+
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable]);
 } else {
@@ -27,16 +36,22 @@ const modules = [
 
 // these are the new models
 // import v2 from 'v2' // not allowed outside module
-const v2 = require('./v2')
+// server/db/models/index.js
+const v2 = require('../../../common/models')
+const Db = require('../../../common/Table')
 // console.log('v2 models', v2)
 // need to create sequelize models
 // Object.keys(v2).forEach( (name,table) => {
+const tables = {}
 
-for( const [name,table] of Object.entries(v2) ) {
-  console.log('model:', name)
-  console.log('table:', table)
-  // console.log('fields:', table.fields)
-  const cfg = {timestamps: false, indexes: [ {unique: true, fields: ['id']}]}
+for( const [name, _table] of Object.entries(models) ) {
+  console.log('server/models/index:model', name)
+
+  const table = new Table(name, _table)
+  tables[name] = table
+
+  // assuming a pk
+  const cfg = {timestamps: true, indexes: table.indexes}
   let model
   try {
     model = sequelize.define(name, table.fields, cfg)
@@ -44,17 +59,25 @@ for( const [name,table] of Object.entries(v2) ) {
   } catch(err){
     console.log('Error', err)
   }
+  
+  // I think sequelize returns a function!!
+  model.table = table // this is the json
+
   model.afterCreate( x => { // that's the insert not the create table!!
     console.log('new record event', x.name)
   })
+  // need to read these from a file - and offload the seed data to a separate 
+  // JSON file which can be read by the server code
+  const force = false
+  const seed = force // if force, you need to seed!!
   console.log('sync', name)
-  model.sync({force : true})
+  if(force && model.sync({force : true})
   .then( () => {
 
     // table has been dropped!!
-    if(table.seed) {
-      console.log('seed', name)
-      table.seed.forEach( (rec,i) => {
+    if(seed && _table.seed) {
+      console.log('seeding', name)
+      _table.seed.forEach( (rec,i) => {
         console.log('rec', rec)
         model.create(rec)
         .then( o => {
@@ -68,9 +91,12 @@ for( const [name,table] of Object.entries(v2) ) {
     }
 
 
-  }) // force modi structure
-  models[name] = model
-}
+  }) ); // force modi structure - NEEDS ;
+  
+
+  console.log('*** ADD MODEL ***', model)
+  models[name] = model // this line wan't executing!!
+}// end for loop
 
 // Initialize models
 modules.forEach(module => {
@@ -81,12 +107,20 @@ modules.forEach(module => {
 // Apply associations - make each Model and property on the object??
 // invoke the associate method if defined on the Model
 Object.keys(models).forEach(key => {
-  if ('associate' in models[key]) {
-    models[key].associate(models);
+  const model = models[key]
+  if ('associate' in model) {
+    model.associate(models);
   }
+
+  // my models - ONLY!
+  if(tables[key]) {
+    const table = tables[key]
+    table.associate()    
+  }
+
 });
 // console.log('models' , models)
-models.sequelize = sequelize;
-models.Sequelize = Sequelize;
+// models.sequelize = sequelize;
+// models.Sequelize = Sequelize;
 // console.log('Finished models/index')
 module.exports = models;

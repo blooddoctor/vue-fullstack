@@ -9,9 +9,52 @@
   validation and error handling etc.
 
 */
+class Field {
+  constructor (cfg) {
+    Object.assign(this,cfg)
+  }
+  static type (cfg) {
+    return new Field(cfg)
+  }
+}
+class String extends Field {
+  type = 'VARCHAR'
+  len = 50
+  constructor (cfg) {
+    super(cfg)
+  }
+
+}
+class Int extends Field {
+  type = 'INTEGER'
+}
+class ForeignKey extends Int {
+
+  index = true
+
+  constructor (tableName, cfg) {
+    super(cfg)
+  }
+}
+
+class PrimaryKey extends Int {
+  primaryKey = true
+  autoIncrement = true
+  allowNulls = false
+  index = true
+
+  constructor (cfg) {
+    super(cfg)
+
+  }  
+}
+
+const F = Field
+const FK = ForeignKey
+
 const types = {
-  string: (len=50) => { return {type: `varchar(${len})` , len: len} },  // ({{len}})
-  password: () => { return {type: 'varchar'} },
+  string: (len=50) => F.type({type: `varchar(${len})` , len: len}),  // ({{len}})
+  password: () => { return {type: 'varchar', extended: 'password'} },
   address: () => { return types.string(255) }, // might add geoloc
   pk: () => { return {type: 'INTEGER' , primaryKey: true, unique: true, autoIncrement: true, allowNulls: false, index: true} },
   fk: tableName => { return {type: 'int', tableName: tableName } },

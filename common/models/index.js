@@ -1,26 +1,40 @@
 // import T from '../datatypes'
-const T = require('../../datatypes')
+const T = require('./datatypes')
 // T reduces typing!! coulda used 'types' or 'datatypes'
 module.exports = {
   Users: {
+    keys: {
+      pk : T.pk(),
+      fks: [
+        T.fk('Role')  // associate the User with a Role (1:1)
+      ]
+    },
     fields: {
-      id: T.pk(),
+      // id: T.pk(),
       username: T.string(),
       name: T.string(),
       password: T.password(),
-      roleId: T.fk('Roles'),
+      // roleId: T.fk('Roles'),
       email: T.email(),
       phone: T.phone()
     }
   },
   Roles: T.lookup('Roles'),
   Doctors: {
+    keys: {
+      pk : T.pk(),
+      fks: [
+        T.fk('User'),
+        T.fk('Hospital'),
+        T.fk('Practice')  // only if Pratices defined
+      ]
+    },
     fields: {
-      id: T.pk(),
+      // id: T.pk(),
       name: T.string(),
-      userId: T.fk('Users'),
-      hospitalId: T.fk('Hospitals'),
-      practiceId: T.fk('Practices'),  // only if Pratices defined
+      // userId: T.fk('Users'),
+      // hospitalId: T.fk('Hospitals'),
+      // practiceId: T.fk('Practices'),  // only if Pratices defined
       address: T.address(),
       phone: T.phone(),
       email: T.email(),
@@ -31,11 +45,18 @@ module.exports = {
   },
   Hospitals: T.lookup('Hospitals', {seed: [{ id:1 , name: 'St James'}]}),
   Patients: {
+    keys: {
+      pk : T.pk(),
+      fks: [
+        T.fk('User'),  // 1:1 only if Patients can login
+        T.fk('Doctor')  // 1:1
+      ]
+    },
     fields: {
-      id: T.pk(),
+      // id: T.pk(),
       name: T.string(),
-      userId: T.fk('Users'),  // only if Patients can login
-      doctorId: T.fk('Doctors'),
+      // userId: T.fk('Users'),  // only if Patients can login
+      // doctorId: T.fk('Doctors'),
       dob: T.date(),
       weight: T.double(),
       height: T.double(),
@@ -50,8 +71,14 @@ module.exports = {
     ]
   },
   Colours: {
+    keys: {
+      pk : T.pk(),
+      fks: [
+
+      ]
+    },
     fields: {
-      id: T.pk(),
+      // id: T.pk(),
       name: T.string(),
       hex: T.colour(), // on colors table
     },
@@ -63,12 +90,18 @@ module.exports = {
     ]
   },
   SampleTypes: {
+    keys: {
+      pk : T.pk(),
+      fks: [
+        T.fk('Colour')  // colour coding - 1:1 (N:1) reverse
+      ]
+    },
     fields: {
-      id: T.pk(),
+      // id: T.pk(),
       name: T.string(),
       colour: T.string(), // FK to colours!!
       hex: T.colour(), // on colors table
-      colourId: T.fk('Colours'),
+      // colourId: T.fk('Colours'),
       img: T.path()
     },
     seed: [
@@ -88,11 +121,18 @@ module.exports = {
   ),
   // ony one sample required per group - except 3
   TestTypeGroups: {
+    keys: {
+      pk : T.pk(),
+      fks: [
+        T.fk('Department'), // each group goes to a single dept
+        T.fk('SampleType') // single type per group
+      ]
+    },
     fields: {
-      id: T.pk(),
+      // id: T.pk(),
       name: T.string(),
-      departmentId: T.fk('Departments'), // each group goes to a single dept
-      sampleTypeId: T.fk('SampleTypes') // single type per group
+      // departmentId: T.fk('Departments'), // each group goes to a single dept
+      // sampleTypeId: T.fk('SampleTypes') // single type per group
     },
     seed: [
       {name: 'Group 1: (Blood) CLOTTED (Red)' , sampleTypeId: 2}, // needs to know last dose of x,y,z
@@ -106,15 +146,23 @@ module.exports = {
   },
   Departments: T.lookup(),
   TestTypes: {
+    keys: {
+      pk : T.pk(),
+      fks: [
+        T.fk('TestTypeGroup'),
+        T.fk('Department'),  // each group goes to a single dept
+        T.fk('SampleType')  // prob unnec - single typeper group?
+      ]
+    },
     fields: {
-      id: T.pk(),
+      // id: T.pk(),
       name: T.string(),
-      testTypeGroupId: T.fk('TestTypeGroups'),
+      // testTypeGroupId: T.fk('TestTypeGroups'),
       turnAround: T.double(),
       info: T.string(255),
       extra: T.string(255),
-      departmentId: T.fk('Departments'),  // each group goes to a single dept
-      sampleTypeId: T.fk('SampleTypes')  // prob unnec - single typeper group?
+      // departmentId: T.fk('Departments'),  // each group goes to a single dept
+      // sampleTypeId: T.fk('SampleTypes')  // prob unnec - single typeper group?
     },
     seed: [
       {name: 'Renal Profile', testTypeGroupId: 1 },
@@ -170,23 +218,38 @@ module.exports = {
   },
   // header for a batch of test - per patient
   TestRequests: {
+    keys: {
+      pk : T.pk(),
+      fks: [
+        T.fk('Patient'),
+        T.fk('Doctor'),
+        T.fk('Hospital')  // only one - this should be the test centre
+      ]
+    },
     fields: {
-      id: T.pk(),
+      // id: T.pk(),
       created: T.datetime(),
       collected: T.datetime(),
       resultsExpected: T.datetime(),
       resultsActual: T.datetime(),
-      patientId: T.fk('Patients'),
-      doctorId: T.fk('Doctors'),
-      hospitalId: T.fk('Hospitals'),  // only one - this should be the test centre
+      // patientId: T.fk('Patients'),
+      // doctorId: T.fk('Doctors'),
+      // hospitalId: T.fk('Hospitals'),  // only one - this should be the test centre
     }
   },
   // one per patient/test requests - correspond to each selected test type
   TestSamples: {
+    keys: {
+      pk : T.pk(),
+      fks: [
+        T.fk('TestRequest'),  // header - parent N:1
+        T.fk('TestType')
+      ]
+    },
     fields: {
       id: T.pk(),
-      testRequestId: T.fk('TestRequests'),  // header
-      testTypeId: T.fk('TestTypeId'),
+      // testRequestId: T.fk('TestRequests'),  // header
+      // testTypeId: T.fk('TestTypes'),
       created: T.datetime(),
       collected: T.datetime(),
       resultsExpected: T.datetime(),
@@ -195,7 +258,4 @@ module.exports = {
     }
 
   }
-  
-
-
 }
