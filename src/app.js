@@ -11,6 +11,14 @@ import * as filters from './util/filters';
 
 import dataService from './services/data.service'  // comms
 import Db from '../common/Db'   // new ClientSide models
+
+
+import { Datetime } from 'vue-datetime'
+// You need a specific loader for CSS files
+import 'vue-datetime/dist/vue-datetime.css'
+ 
+Vue.component('datetime', Datetime)
+global.Datetime = Datetime
 // merge the comms and models
 global.db = new Db(dataService)
 global.db.models = global.db.tables // harmonize

@@ -12,11 +12,24 @@ class VueSingle {
     curr: {}
   }
 
-
   init(primaryModelName) {
-    console.log('*** DB', db)
+    // console.log('*** DB', db)
     this.primaryModelName = primaryModelName
     this.primaryModel = db.model(this.primaryModelName)
+
+    console.log('VueSingle.init() - get primary data', this.primaryModelName)
+    this.primaryModel.getFirst()
+    .then( data => {
+      console.log('VueSingle:init() - primaryModel data RX', data.data[0])
+      if(data.data[0]){
+        this.data.curr = data.data[0]
+      } else {
+        console.error('No prinary data', thus.primaryModelName, data.data)
+      }
+
+
+    })
+
     console.log('VueSingle:getting foreign key data')
     if(this.primaryModel.keys && this.primaryModel.keys.fks) {
       this.primaryModel.keys.fks.forEach(fk => {
@@ -110,13 +123,24 @@ class VueSingle {
     if(vueData instanceof Function) {
       vue.data = () => {
         console.log('Vue firing data latch - function')
-        return Object.assign(this.data,vueData()) // merge the object & function
+        return Object.assign(this.data, vueData()) // merge the object & function
       }
     } else {
       vue.data = () => {
         console.log('Vue firing data latch - array')
-        return Object.assign(this.data,vueData)  // merge the objects
+        return Object.assign(this.data, vueData)  // merge the objects
       }      
+    }
+    const vueCreated = vue.created
+    vue.created = () => {
+      // console.log(`${this.$options.name} created`)
+      console.log('VueSingle:created()')
+      // this.primaryModel.getFirst()
+      // .then( data => {
+      //   console.log('VueSingle:created() - primaryModel data RX', data.data)
+      //   this.data.curr = data.data 
+      // })
+      if(vueCreated) vueCreated() // call the original if it exists
     }
 
     return vue

@@ -1,19 +1,14 @@
 <template lang="pug">
 
-  label(v-if='label' for='select') {{label}}
+  label(v-if='label' for='input') {{label}}
 
-    select#select(
+    input(
       v-bind:value="value" 
       v-on:input="$emit('input', $event.target.value)"
       v-bind="$attrs"
     )
-      //- placeholder='Patient doctor'
-
-      option(
-        v-for='option in options' 
-        :value='option[id]' 
-        :key='option[id]'
-      ) {{option[display]}}
+    //- validation errors here
+  
 
 </template>
 
@@ -36,23 +31,9 @@ export default {
       type: String,
       default: 'Name'
     },
-    options: {
-      type: Array,
-      required: true
-    },
     value: {
-      type: Number,
       required: true
-    },
-    id: {
-      type: String,
-      default: 'id'
-    },
-    display: {
-      type: String,
-      default: 'name'
     }
-
   }
 
 }
