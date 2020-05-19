@@ -55,20 +55,20 @@ for( const [name, _table] of Object.entries(_tables) ) {
   } catch(err){
     console.log('Error', err)
   }
-  console.log('*** ADD MODEL ***', model)
+  // console.log('*** ADD MODEL ***', model)
   models[name] = model // this line wan't executing!!
   
   // I think sequelize returns a function!!
   model.table = table // this is the json
 
   model.afterCreate( x => { // that's the insert not the create table!!
-    console.log('new record event', x.name)
+    console.log(`new record event `, model.name, x)
   })
   // need to read these from a file - and offload the seed data to a separate 
   // JSON file which can be read by the server code
   const force = false
   const seed = force // if force, you need to seed!!
-  console.log('sync', name)
+  // console.log('sync', name)
   if(force && model.sync({force : true})
   .then( () => {
 

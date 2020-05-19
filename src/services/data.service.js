@@ -18,7 +18,7 @@ const instance = axios.create({});
 //   return config;
 // });
 
-const get = url => {console.log('axios getting url', url); return instance.get(url);}
+const get = url => instance.get(url);
 const post = (url, data) => instance.post(url, data);
 const put = (url, data) => instance.put(url, data);
 const del = url => instance.delete(url);

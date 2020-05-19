@@ -22,7 +22,6 @@ global.Datetime = Datetime
 // merge the comms and models
 global.db = new Db(dataService)
 global.db.models = global.db.tables // harmonize
-console.log('db', db)
 
 // import vuetify from './plugins/vuetify'
 

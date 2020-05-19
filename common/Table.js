@@ -97,6 +97,26 @@ module.exports = class Table extends Base{
     }
 
   }
+  // need to be careful - SS has its own version
+  // we have no "model" for a record!!
+  // should create a Record/Entity class
+  create(cfg) {
+    const rec = {
+      table: this,
+      model: this,
+      save: function() {
+        console.log('common/Table:save(this)', this)
+        return this.model.save(this)
+      }
+    }
+    for(const [name, field] of Object.entries(this.fields)) {
+      // console.log('name, field', name, field)
+      rec[name] = field.default;
+    }
+    // console.log('New record', rec)
+    // and we should save it!!
+    return rec
+  }
 
 
 

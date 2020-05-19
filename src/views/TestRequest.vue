@@ -7,42 +7,42 @@
     .column
       //- legend Patient
 
-      v-select(label="Patient" 
-        :options="Patients" 
-        v-model="curr.patientId"
-      )
-      v-select(label="Doctor" :options="Doctors" v-model="curr.doctorId" placeholder='The Doc')
-      v-select(label="Hospital" :options="Hospitals" v-model="curr.hospitalId")
+      //- v-select(label="Patient" 
+      //-   :options="Patients" 
+      //-   v-model="curr.patientId"
+      //- )
+      //- v-select(label="Doctor" :options="Doctors" v-model="curr.doctorId" placeholder='The Doc')
+      //- v-select(label="Hospital" :options="Hospitals" v-model="curr.hospitalId")
 
     
     .colunn
 
       //- legend Patient
       //- label Created
-      v-datetime(label='Created'
-          v-model="curr.createdAt"
-          placeholder="Date/Time sample created at"
-          :type="dt"
-         )
+      //- v-datetime(label='Created'
+      //-     v-model="curr.createdAt"
+      //-     placeholder="Date/Time sample created at"
+      //-     :type="dt"
+      //-    )
 
-      v-datetime(label='Collected'
-        v-model="curr.collected"
-        placeholder="Date/Time sample collected at"
-        :type="dt"
-       )
-      v-datetime(label='Expected'
-        v-model="curr.resultsExpected"
-        placeholder="Date/Time results expected at"
-        :type="dt"
-       )
-      v-datetime(label='Actual'
-        v-model="curr.resultsActual"
-        placeholder="Date/Time results expected at"
-        :type="dt"
-       )
+      //- v-datetime(label='Collected'
+      //-   v-model="curr.collected"
+      //-   placeholder="Date/Time sample collected at"
+      //-   :type="dt"
+      //-  )
+      //- v-datetime(label='Expected'
+      //-   v-model="curr.resultsExpected"
+      //-   placeholder="Date/Time results expected at"
+      //-   :type="dt"
+      //-  )
+      //- v-datetime(label='Actual'
+      //-   v-model="curr.resultsActual"
+      //-   placeholder="Date/Time results expected at"
+      //-   :type="dt"
+      //-  )
   .row
     .column
-      test-samples
+      test-samples(:testRequestId='curr.id')
 
 
 </template>

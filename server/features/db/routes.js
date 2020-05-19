@@ -7,6 +7,11 @@ module.exports = app => {
   // Application data route
   // app.route('/api/db/:table/post').post(ctrl.setLanguage);
 
+  // by putting POST first - finds the route!!!
+  app.post('/db/:table/save', (req,res) => {
+    ctrl.dispatch('save', req, res)
+  })
+
   app.get('/db/:table/getFirst', (req,res) => {
     ctrl.dispatch('getFirst', req, res)
   })
@@ -18,6 +23,7 @@ module.exports = app => {
   app.get('/db/:table/getModel', (req,res) => {
     ctrl.dispatch('getModel', req, res)
   })
+
 
   // app.route('/db/:table/get/:id')
   //   // .all(policy.isAllowed)

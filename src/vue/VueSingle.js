@@ -17,10 +17,10 @@ class VueSingle {
     this.primaryModelName = primaryModelName
     this.primaryModel = db.model(this.primaryModelName)
 
-    console.log('VueSingle.init() - get primary data', this.primaryModelName)
+    // console.log('VueSingle.init() - get primary data', this.primaryModelName)
     this.primaryModel.getFirst()
     .then( data => {
-      console.log('VueSingle:init() - primaryModel data RX', data.data[0])
+      // console.log('VueSingle:init() - primaryModel data RX', data.data[0])
       if(data.data[0]){
         this.data.curr = data.data[0]
       } else {
@@ -30,7 +30,7 @@ class VueSingle {
 
     })
 
-    console.log('VueSingle:getting foreign key data')
+    // console.log('VueSingle:getting foreign key data')
     if(this.primaryModel.keys && this.primaryModel.keys.fks) {
       this.primaryModel.keys.fks.forEach(fk => {
 
@@ -51,7 +51,7 @@ class VueSingle {
 
         // wait for the data to arrive
         fkReq.req.then((data)=> {
-          console.log('FK data received', data, this.primaryModel, fkReq)
+          // console.log('FK data received', data, this.primaryModel, fkReq)
           // will this be bound/closure
           this.data[fkReq.name] = data.data
           fkReq.data = data.data // store the data on the model!!

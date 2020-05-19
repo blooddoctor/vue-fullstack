@@ -1,7 +1,7 @@
 <template>
   <footer class="footer">
     <span>
-      {{ appData.content.app_description }}
+      <!-- {{ appData.content.app_description }} -->
     </span>
   </footer>
 </template>

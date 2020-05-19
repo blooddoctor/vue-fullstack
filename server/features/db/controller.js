@@ -7,13 +7,13 @@ module.exports = {
   dispatch (methodName,req,res) {
     this.tableName = req.params.table
     if(!models[this.tableName]) {
-      console.error('Server:db.controller:Cannot find model',this.tableName, models)
+      console.error('server/db/controller:Cannot find model',this.tableName, models)
       return res.send(`Error: Cannot find model [${this.tableName}]`)
     }
     this.model = models[this.tableName]
     console.log('model', this.model)
     this.method = this[methodName]
-    console.log(`db.controller.dispatch(${this.tableName}.${methodName}, req)`)
+    console.log(`server/db/controller.dispatch(${this.tableName}.${methodName}, req)`)
     
     this.method.call(this,req)
     .then(data => {
@@ -26,8 +26,8 @@ module.exports = {
 
   },
   getModel (req) {
-    console.log(`Server:Controller:${this.tableName}.getModel()`)
-    console.log('Server:Model?', this.model.table)
+    console.log(`server/db/controller:${this.tableName}.getModel()`)
+    // console.log('Server:Model?', this.model.table)
     return Promise.resolve(this.model.table)
   },
   getOne (req) {
@@ -57,7 +57,14 @@ module.exports = {
         },
         order: [ [ 'ID', 'ASC' ]] // tables MUST have ID
       })
-  }
+  },
+  save (req) {
+    this.body = req.body
+    console.log(`Server:Controller:${this.tableName}.save()`, this.body)
+    // console.log('model', model)
+    this.instance = this.model.build(this.body)
+    return this.instance.save()
+  },
 
 }
 

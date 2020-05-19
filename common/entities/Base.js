@@ -28,17 +28,22 @@ module.exports = class BaseModel {
   */
   getOne (id) {
     console.log('Base:getOne')
-    return this.db.getOne( {model:this.name , id} )
+    return this.db.getOne(this, id)
   }
 
   getFirst () {
     console.log('Base:getFirst')
-    return this.db.getFirst( {model:this.name} )
+    return this.db.getFirst(this)
   }
 
   getAll () {
     console.log('Base:getAll')
-    return this.db.getAll( {model:this.name} )
+    return this.db.getAll(this)
+  }
+
+  save (rec) {
+    console.log('Base:save')
+    return this.db.save(this, rec)
   }
 
 }
