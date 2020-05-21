@@ -22,6 +22,12 @@ import Db from '../common/Db'   // new ClientSide models
 global.db = new Db(dataService)
 global.db.models = global.db.tables // harmonize
 
+// bootstrap
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+// Install BootstrapVue
+Vue.use(BootstrapVue)
+// Optionally install the BootstrapVue icon components plugin
+Vue.use(IconsPlugin)
 
 // import LogRocket from 'logrocket';
 // LogRocket.init('kqv2le/blooddoctor');
