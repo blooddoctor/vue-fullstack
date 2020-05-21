@@ -38,13 +38,20 @@ const Table = require('../../../common/Table')
 // need to create sequelize models
 // Object.keys(v2).forEach( (name,table) => {
 const tables = {}
-const models = {};
+const models = {sql:sequelize}  // make avail for raw queries etc
+// pseudo db object for foreign key resolution
+const db = {
+  tables: tables,
+  models: models,
+}
 
 for( const [name, _table] of Object.entries(_tables) ) {
   console.log('server/models/index:model', name)
 
   const table = new Table(name, _table)
   tables[name] = table
+  table.sql = sequelize
+  table.db = db
 
   // assuming a pk
   const cfg = {timestamps: true, indexes: table.indexes}
@@ -57,19 +64,29 @@ for( const [name, _table] of Object.entries(_tables) ) {
   }
   // console.log('*** ADD MODEL ***', model)
   models[name] = model // this line wan't executing!!
-  
+  table.model = model
   // I think sequelize returns a function!!
   model.table = table // this is the json
+  model.sql = table.sql // for direct db access
+  model.query = function(sql) {
+    try{
+      console.log('query', sql)
+      return this.sql.query(sql)  // raw queries
+    } catch(e) {
+      console.log('Error', e)
+    }
+  }
 
   model.afterCreate( x => { // that's the insert not the create table!!
     console.log(`new record event `, model.name, x)
   })
   // need to read these from a file - and offload the seed data to a separate 
   // JSON file which can be read by the server code
-  const force = false
+  const sync = config.sync
+  const force = config.force
   const seed = force // if force, you need to seed!!
-  // console.log('sync', name)
-  if(force && model.sync({force : true})
+  console.log('sync', name, sync)
+  if(sync && model.sync({force : force})
   .then( () => {
 
     // table has been dropped!!
@@ -110,8 +127,11 @@ Object.keys(models).forEach(key => {
 
   // my models - ONLY!
   if(tables[key]) {
+    console.log('setting my foreign keys', key)
     const table = tables[key]
-    table.associate()    
+    table.associate()
+    // this doesn't work!!
+    // table.associate_ss() // SS specific using sequelize
   }
 
 });

@@ -174,7 +174,6 @@ module.exports = {
       {name: 'CRP', testTypeGroupId: 1 },
       {name: 'Lipid Profile', testTypeGroupId: 1 },
       {name: 'Iron Studies', testTypeGroupId: 1 },
-      {name: 'Iron Studies', testTypeGroupId: 1 },
       {name: 'LH & FSH', testTypeGroupId: 1 },
       {name: 'Creatine Kinase', testTypeGroupId: 1 },
       {name: 'Lactate Dehydrongenase', testTypeGroupId: 1 },
@@ -238,16 +237,18 @@ module.exports = {
     }
   },
   // one per patient/test requests - correspond to each selected test type
-  TestSamples: {
+  // allocate tests to samples!!
+  TestRequestTests: {
     keys: {
       pk : T.pk(),
       fks: [
         T.fk('TestRequest'),  // header - parent N:1
-        T.fk('TestType')
+        T.fk('TestType'),
+        T.fk('TestRequestSample') // allocate to a sample 
       ]
     },
     fields: {
-      id: T.pk(),
+      // id: T.pk(),
       // testRequestId: T.fk('TestRequests'),  // header
       // testTypeId: T.fk('TestTypes'),
       created: T.datetime(),
@@ -255,6 +256,24 @@ module.exports = {
       resultsExpected: T.datetime(),
       resultsActual: T.datetime(),
       results: T.string(255)      
+    }
+
+  },
+  // unique id per patient/sample
+  // each sample can have many tests
+  TestRequestSamples: {
+    keys: {
+      pk : T.pk(),
+      fks: [
+        T.fk('TestRequest'),  // header - parent N:1
+        T.fk('SampleType'),  // 
+        T.fk('TestTypeGroup')  // should be one sample per group - except group 3
+      ]
+    },
+    fields: {
+      volume: T.double(),
+      testCount: T.int({default:1}),  // how many tests per sample
+      sampleCount: T.int({default:1})  // how many samples of a given type required
     }
 
   }

@@ -1,10 +1,11 @@
 <template lang="pug">
   
-  div.group.panel( :openLabel='group.name' :closedLabel='group.name' :isOpen='open') 
-    
-    span.panel-header(@click='toggleOpen') {{group.name}}
+  <!-- div.column.group.panel( :openLabel='group.name' :closedLabel='group.name' :isOpen='open')  -->
+  .column.group
 
-    div.row(v-if='isOpen')
+    span.panel-header(href='header' @click='toggleOpen') {{group.name}}
+
+    div.row(v-if='isOpen' href='content')
 
       div.column(v-for='col in cols') 
 
@@ -34,11 +35,12 @@ import Collapsible from 'vue-collapsible-component';
 
 const testTypesReq = db.model('TestTypes').getAll()
 
+const sampleTypes = db.model('SampleTypes').getAll()
 
 export default {
   data () {
     return {
-      isOpen:false,
+      isOpen: this.open,
       inner:[],
       types: [],
     }
@@ -93,7 +95,7 @@ export default {
 
   },
   watch : {
-    
+    // this is responding to any change to tests!! beong called 7 times!!
     tests () { // this value is the result of an sync fetch outside
       console.log('Tests have arrived')
       this.onDataArrived()

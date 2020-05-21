@@ -13,3 +13,9 @@ export default {
   }
 };
 </script>
+<style scoped>
+  /* footer covering data */
+  footer {  
+    z-index: -1;
+  }
+</style>

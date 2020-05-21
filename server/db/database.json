@@ -2,16 +2,25 @@
   "development": {
     "dialect": "sqlite",
     "storage": "./db.sqlite",
-    "logging": false
+    "logging": true,
+    "force": false,
+    "sync": true,
+    "seed":false
   },
   "test": {
     "logging": false,
     "dialect": "sqlite",
-    "storage": ":memory:"
+    "storage": ":memory:",
+    "force": false,
+    "sync": true,
+    "seed":false
   },
   "production": {
     "dialect": "sqlite",
     "storage": "./db.sqlite",
-    "logging": false
+    "logging": false,
+    "force": false,
+    "sync": true,
+    "seed":false
   }
 }

@@ -1,7 +1,7 @@
 <template lang="pug">
 .container
   .row
-    h1 Test Request
+    h2 Test Request
   .row
 
     .column
@@ -42,7 +42,7 @@
       //-  )
   .row
     .column
-      test-samples(:testRequestId='curr.id')
+      test-request-groups(:testRequestId='curr.id')
 
 
 </template>
@@ -53,7 +53,7 @@ import VSelect from '../components/Select.vue'
 import VInput from '../components/Input.vue'
 import VDatetime from '../components/VDatetime.vue'
 
-import TestSamples from './TestSamples.vue'
+import TestRequestGroups from './TestRequestGroups.vue'
 
 import VueSingle from '../vue/VueSingle'
 VueSingle.init('TestRequests')
@@ -70,11 +70,17 @@ export default VueSingle.bind({
       // Doctors: []
     }
   },
+  props: {
+    testRequestId : {
+      type: Number,
+      default: 1
+    }
+  },
   components: {
     VSelect, 
     VInput, 
     VDatetime,
-    TestSamples,
+    TestRequestGroups,
   },
   methods: {
 

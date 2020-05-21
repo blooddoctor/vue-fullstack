@@ -66,14 +66,75 @@ class Db {  // should extends
   getFirst (model) {
     return this.dataService.get(`/db/${model.name}/getFirst`)
   }
-  getAll (model) {
-    return this.dataService.get(`/db/${model.name}/getAll`)
+  getAll (model, cfg) { // cfg could be WHERE clauses etc
+    if(cfg) {
+      return this.dataService.post(`/db/${model.name}/getAll`, cfg)
+    } else {
+      return this.dataService.get(`/db/${model.name}/getAll`, {params: cfg} )
+    }
   }
   save (model, rec) {
     // need to remove cyclic references
     rec.model = null
     rec.table = null
     return this.dataService.post(`/db/${model.name}/save`, rec)
+  }
+  delete (model, id) {
+    return this.dataService.delete(`/db/${model.name}/delete/${id}`)
+  }
+
+  query (sql) {
+    if(this.currQuery){
+      return this.deferQuery(sql)
+    } else {
+      return this.sendQuery(sql)
+    }
+
+
+  }
+
+  sendQuery (sql) {
+    // I think we need a pipeline here
+    const p = new Promise((resolve,reject) => {
+
+      this.currQuery = this.dataService.post(`/db/query/`, {sql: sql} )
+      this.currQuery
+      .then( data => {
+        this.currQuery = null
+        resolve(data)
+        // now need to service the queue
+      })
+      .catch(e=> {
+        reject(e)
+      })
+    
+
+    })
+    return p
+  }
+
+  deferQuery (sql) {
+    const p = new Promise((resolve,reject) => {
+      console.log('waiting for last query to finish')
+      setTimeout(() => {
+        console.log('waited 2 secs')
+        if(this.currQuery) {
+          console.error('previous query still pending')
+        } else {
+          console.log('previous query finished - safe to proceed')
+          this.sendQuery(sql)
+          .then(data => {
+            resolve(data)
+          })
+          .catch(e=>{
+            reject(e)
+          })
+        }
+      }, 2000)   
+
+
+    })
+    return p
   }
 
 

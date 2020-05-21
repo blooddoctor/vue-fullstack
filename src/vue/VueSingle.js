@@ -24,7 +24,7 @@ class VueSingle {
       if(data.data[0]){
         this.data.curr = data.data[0]
       } else {
-        console.error('No prinary data', thus.primaryModelName, data.data)
+        console.error('No prinary data', this.primaryModelName, data.data)
       }
 
 

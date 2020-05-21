@@ -4,7 +4,8 @@
 // import dataService from '../../src/services/data.service'
 
 module.exports = class BaseModel {
-  db = null
+  db = null // only set on CS
+  _sql = null // used SS to issue raw queries when sequelize has problems
   name = ''
   isModelLoaded = false
   modelRequest = null
@@ -17,6 +18,7 @@ module.exports = class BaseModel {
   }
 
   getModel() {
+    console.log('common/entities/Base:getModel')
     if(this.isModelLoaded) {
       return Promise.resolve(this)
     }
@@ -27,23 +29,30 @@ module.exports = class BaseModel {
     neeed to be async
   */
   getOne (id) {
-    console.log('Base:getOne')
+    console.log('common/entities/Base:getOne')
     return this.db.getOne(this, id)
   }
 
   getFirst () {
-    console.log('Base:getFirst')
+    console.log('common/entities/Base:getFirst')
     return this.db.getFirst(this)
   }
 
-  getAll () {
-    console.log('Base:getAll')
-    return this.db.getAll(this)
+  getAll (cfg) {  // 
+    console.log('common/entities/Base:getAll', cfg)
+    if(cfg) console.log('=========== cfg:', cfg)
+    return this.db.getAll(this, cfg)
   }
 
   save (rec) {
-    console.log('Base:save')
+    console.log('common/entities/Base:save')
     return this.db.save(this, rec)
+  }
+
+  delete (rec) {  // accept an object or an id
+    if(rec.id) rec=rec.id
+    console.log('common/entities/Base:delete')
+    return this.db.delete(this, rec)    
   }
 
 }

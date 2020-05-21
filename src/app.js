@@ -2,15 +2,10 @@ import Vue from 'vue';
 import App from './App.vue';
 import { store } from './store';
 import { router } from './router';
-import { createValidation } from './forms';
 import { sync } from 'vuex-router-sync';
 import { decode, sessionService } from './services';
 import { ACCESS_TOKEN } from './constants';
-import titleMixin from './util/title';
-import * as filters from './util/filters';
 
-import dataService from './services/data.service'  // comms
-import Db from '../common/Db'   // new ClientSide models
 
 
 import { Datetime } from 'vue-datetime'
@@ -19,17 +14,30 @@ import 'vue-datetime/dist/vue-datetime.css'
  
 Vue.component('datetime', Datetime)
 global.Datetime = Datetime
+
+
+import dataService from './services/data.service'  // comms
+import Db from '../common/Db'   // new ClientSide models
 // merge the comms and models
 global.db = new Db(dataService)
 global.db.models = global.db.tables // harmonize
 
+
+// import LogRocket from 'logrocket';
+// LogRocket.init('kqv2le/blooddoctor');
+
 // import vuetify from './plugins/vuetify'
 
+import titleMixin from './util/title';
 // mixin for handling title
 Vue.mixin(titleMixin);
+
+
+import { createValidation } from './forms';
 // plugins
 createValidation();
 
+import * as filters from './util/filters';
 // register global utility filters.
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key]);

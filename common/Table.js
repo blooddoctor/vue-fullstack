@@ -9,6 +9,7 @@ module.exports = class Table extends Base{
 
   // need to harmonize the cs and ss 
   db = null // I'll set this for the client model -
+  _sql = null // used on SS to issue raw queries when sequelize has problems
   constructor (name,table) {
     super()
       
@@ -79,28 +80,55 @@ module.exports = class Table extends Base{
   }
 
     // setup the associations
+    // this needs to work CS & SS (using Sequelize)
   associate () {
     // my one
-    if (this.keys && this.keys.fk) {
+    if (this.keys && this.keys.fks) {
       // need to link tables
-      this.keys.fk.forEach(fk => {
+      this.keys.fks.forEach(fk => {
         // look for the N side in 1:N
         const tableName = fk.tableName
-        if(!db.tables[tableName]) {
+        if(!this.db.tables[tableName]) {
           console.error('No foreign table', tableName)
         } else{
           // the foreign model
-          fk.table = db.tables[tableName]
+          fk.table = this.db.tables[tableName]
         }
 
       })
     }
-
   }
+
+  associate_ss () {
+    // console.log('associate_ss', this)
+    // my one
+    if (this.keys && this.keys.fks) {
+      // need to link tables
+      this.keys.fks.forEach(fk => {
+        // look for the N side in 1:N
+        const modelName = fk.tableName
+        console.log('setting link to ', modelName)
+        if(!this.db.models[modelName]) {
+          console.error('No foreign model', modelName)
+        } else{
+          // the foreign model
+          fk.model = this.db.models[modelName]
+          // all my models are N:1 - ie I define the key in the
+          console.log(`** Associaton: ${this.name}.hasOne(${fk.model.name})`) 
+          this.model.hasOne(fk.model)
+          console.log(`** Associaton: ${fk.model.name}.hasMany(${this.name})`) 
+          fk.model.hasMany(this.model)
+
+        }
+
+      })
+    }
+  }
+
   // need to be careful - SS has its own version
   // we have no "model" for a record!!
   // should create a Record/Entity class
-  create(cfg) {
+  create(init) {  // initial values
     const rec = {
       table: this,
       model: this,
@@ -113,6 +141,7 @@ module.exports = class Table extends Base{
       // console.log('name, field', name, field)
       rec[name] = field.default;
     }
+    Object.assign(rec, init)  // merge initial values
     // console.log('New record', rec)
     // and we should save it!!
     return rec

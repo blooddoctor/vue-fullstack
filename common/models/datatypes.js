@@ -53,7 +53,7 @@ const F = Field
 const FK = ForeignKey
 
 const types = {
-  string: (len=50, cfg={}) => F.type(Object.assign({type: `varchar(${len})` , len: len, default: ''}, cfg)),  // ({{len}})
+  string: (len=50, cfg={}) => Object.assign({type: `varchar(${len})` , len: len, default: ''}, cfg),  // ({{len}})
   password: () => { return types.string(50, {extended: 'password'}) },
   address: () => { return types.string(255) }, // might add geoloc
   pk: () => { return {type: 'INTEGER' , primaryKey: true, default:null, unique: true, autoIncrement: true, allowNulls: false, index: true} },
@@ -62,7 +62,7 @@ const types = {
   phone: () => { return types.string(50,{extended: 'phone' }) },
   date: () => { return {type: 'date' , extended: 'date', default: Date.now()} },
   datetime: () => { return {type: 'datetime' , extended: 'datetime', default: '2020-01-01 12:00:00'} },
-  int: (len=10) => { return {type: `int(${len})` , len: len, extended: 'number', default:0} }, // ({{len}})
+  int: (cfg) => { const len=10; return Object.assign({type: `int(${len})` , len:len , extended: 'number', default:0},cfg) }, // ({{len}})
   double: () => { return {type: 'double', default:0} },
   colour: () => { return types.string(50,{extended: "color" }) },  // RGB model - override get/set
   path: () => { return types.string(255) },  // RGB model - override get/set

@@ -12,6 +12,25 @@ module.exports = app => {
     ctrl.dispatch('save', req, res)
   })
 
+  app.post('/db/query/', (req,res) => {
+    console.log('================= query RX', req.body)
+    ctrl.dispatch2('query', req, res)
+  })
+
+  // to handle query params in body
+  app.post('/db/:table/getAll', (req,res) => {
+    ctrl.dispatch('getAll', req, res)
+  })
+
+  app.delete('/db/:table/delete/:id', (req,res) => {
+    ctrl.dispatch('delete', req, res)
+  })
+
+
+  app.get('/db/:table/getOne/:id', (req,res) => {
+    ctrl.dispatch('getOne', req, res)
+  })
+
   app.get('/db/:table/getFirst', (req,res) => {
     ctrl.dispatch('getFirst', req, res)
   })
